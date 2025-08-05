@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // TEMPORARY: Allow all read/write access for development
+    // TODO: Implement proper Auth0 + Firebase Auth integration
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

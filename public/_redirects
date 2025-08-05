@@ -1,0 +1,5 @@
+# Specific route for Auth0 callback
+/callback/* /index.html 200
+
+# All other routes
+/* /index.html 200

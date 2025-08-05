@@ -1,0 +1,356 @@
+import React from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronLeft, Shield, UserCog, ClipboardCheck, Clock, AlertTriangle } from "lucide-react";
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import UserProgressChart from '@/components/UserProgressChart';
+import * as firebaseUserService from '@/services/firebaseUserService';
+import { User, UserStatus } from '@/types/user';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/config/firebase';
+
+const UserProfile = () => {
+  const { userId } = useParams<{ userId: string }>();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [user, setUser] = React.useState<User | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
+      // Decode the URL-encoded email address
+      const decodedUserId = decodeURIComponent(userId);
+      console.log('🔍 Raw userId from URL:', userId);
+      console.log('🔍 Decoded userId (email):', decodedUserId);
+
+      setLoading(true);
+      
+      // Retry logic for production reliability
+      const maxRetries = 3;
+      let retryCount = 0;
+      
+      while (retryCount < maxRetries) {
+        try {
+          // Use direct getUserByEmail for better performance and reliability
+          const foundUser = await firebaseUserService.getUserByEmail(decodedUserId);
+          
+          if (foundUser) {
+            console.log('✅ User found:', foundUser.email);
+            // Ensure the user object has the correct id field
+            const userWithCorrectId = {
+              ...foundUser,
+              id: decodedUserId // Ensure ID matches the decoded email
+            };
+            setUser(userWithCorrectId);
+            return; // Success, exit retry loop
+          } else {
+            console.log(`❌ User not found with email: ${decodedUserId} (attempt ${retryCount + 1})`);
+            
+            // On final attempt, try real-time listener as last resort
+            if (retryCount === maxRetries - 1) {
+              console.log('🔄 Trying real-time listener as fallback...');
+              
+              // Set up real-time listener for this specific user
+              const userRef = doc(db, 'users', decodedUserId);
+              const unsubscribe = onSnapshot(userRef, (doc) => {
+                if (doc.exists()) {
+                  console.log('✅ User found via real-time listener:', doc.data().email);
+                  const userData = doc.data() as User;
+                  const userWithCorrectId = {
+                    ...userData,
+                    id: decodedUserId
+                  };
+                  setUser(userWithCorrectId);
+                  setLoading(false);
+                  unsubscribe(); // Clean up listener
+                } else {
+                  // Still not found after listener, show error
+                  setTimeout(() => {
+                    console.log('❌ User still not found after real-time listener');
+                    toast({
+                      title: "User not found",
+                      description: "The requested user could not be found. They may not be registered yet.",
+                      variant: "destructive"
+                    });
+                    navigate("/admin");
+                    setLoading(false);
+                    unsubscribe(); // Clean up listener
+                  }, 2000); // Wait 2 seconds for real-time updates
+                }
+              }, (error) => {
+                console.error('Real-time listener error:', error);
+                toast({
+                  title: "Error",
+                  description: "Failed to load user data. Please try again.",
+                  variant: "destructive"
+                });
+                navigate("/admin");
+                setLoading(false);
+                unsubscribe(); // Clean up listener
+              });
+              
+              return; // Exit retry loop, listener will handle the rest
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to fetch user (attempt ${retryCount + 1}):`, error);
+          
+          // On final attempt, show error
+          if (retryCount === maxRetries - 1) {
+            toast({
+              title: "Error",
+              description: "Failed to load user data. Please try again.",
+              variant: "destructive",
+            });
+            navigate("/admin");
+            return;
+          }
+        }
+        
+        retryCount++;
+        // Wait before retrying (exponential backoff)
+        const delay = Math.min(1000 * Math.pow(2, retryCount - 1), 5000);
+        console.log(`⏳ Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+      
+      setLoading(false);
+    };
+    
+    fetchUser();
+  }, [userId, toast, navigate]);
+
+  const handleStatusChange = async (newStatus: UserStatus) => {
+    if (!user) return;
+    
+    try {
+      console.log('🔄 Updating user status:', user.email, 'to', newStatus);
+      const updatedUser = await firebaseUserService.saveUser({
+        ...user,
+        status: newStatus
+      });
+      
+      setUser(updatedUser);
+      toast({
+        title: "Status Updated",
+        description: `User status has been changed to ${newStatus}`,
+      });
+    } catch (error) {
+      console.error('Failed to update user status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update user status",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString();
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-8 flex items-center justify-center">
+          <div className="animate-pulse flex space-x-2">
+            <div className="h-3 w-3 bg-primary rounded-full"></div>
+            <div className="h-3 w-3 bg-primary rounded-full"></div>
+            <div className="h-3 w-3 bg-primary rounded-full"></div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-8">
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>User Not Found</CardTitle>
+              <CardDescription>
+                The requested user could not be found.
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <Button asChild>
+                <Link to="/admin">
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Back to Admin Dashboard
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <Button variant="outline" size="sm" className="mr-4" asChild>
+              <Link to="/admin">
+                <ChevronLeft className="mr-1 h-4 w-4" />
+                Back
+              </Link>
+            </Button>
+            <h1 className="text-2xl font-bold">User Profile</h1>
+          </div>
+          
+          <div className="flex space-x-2">
+            {user.status === 'pending' && (
+              <Button 
+                size="sm" 
+                onClick={() => handleStatusChange('active')}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <ClipboardCheck className="mr-1 h-4 w-4" />
+                Approve User
+              </Button>
+            )}
+            
+            {user.status === 'active' ? (
+              <Button 
+                size="sm" 
+                variant="destructive"
+                onClick={() => handleStatusChange('blocked')}
+              >
+                <AlertTriangle className="mr-1 h-4 w-4" />
+                Block User
+              </Button>
+            ) : user.status === 'blocked' && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => handleStatusChange('active')}
+              >
+                Unblock User
+              </Button>
+            )}
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* User Info Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>User Information</CardTitle>
+              <CardDescription>Account details and status</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-center mb-4">
+                <div className="w-24 h-24 rounded-full bg-slate-200 flex items-center justify-center text-3xl font-bold text-slate-600">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              </div>
+              
+              <div className="text-center mb-4">
+                <h3 className="text-xl font-medium">{user.name}</h3>
+                <p className="text-muted-foreground">{user.email}</p>
+                <div className="mt-2">
+                  <Badge className={
+                    user.status === 'active' ? 'bg-green-500' : 
+                    user.status === 'pending' ? 'bg-yellow-500' : 
+                    'bg-red-500'
+                  }>
+                    {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                  </Badge>
+                  
+                  {user.role === 'super_admin' && (
+                    <Badge variant="outline" className="ml-2 bg-blue-100">
+                      <Shield className="mr-1 h-3 w-3" />
+                      Super Admin
+                    </Badge>
+                  )}
+                  
+                  {user.role === 'admin' && (
+                    <Badge variant="outline" className="ml-2 bg-purple-100">
+                      <UserCog className="mr-1 h-3 w-3" />
+                      Admin
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              
+              <div className="border-t pt-4 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Created</span>
+                  <span>{formatDate(user.createdAt)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Last Login</span>
+                  <span>{formatDate(user.lastLogin)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">User ID</span>
+                  <span className="text-xs font-mono bg-slate-100 px-2 py-1 rounded">{user.id}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* User Progress Card - Main content, spans 2 columns */}
+          <div className="lg:col-span-2">
+            <UserProgressChart user={user} />
+            
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Learning History</CardTitle>
+                <CardDescription>Time spent and modules completed</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {user.completedModules.length > 0 ? (
+                  <div className="space-y-4">
+                    {user.completedModules.map((module, index) => (
+                      <div key={index} className="flex items-center justify-between border-b pb-2">
+                        <div className="flex items-center">
+                          <ClipboardCheck className="h-5 w-5 text-green-500 mr-2" />
+                          <span>{module}</span>
+                        </div>
+                        <Badge variant="outline">
+                          <Clock className="mr-1 h-3 w-3" />
+                          {/* Mock completion date - in a real app, you'd have actual data */}
+                          {new Date(Date.now() - (index * 48 * 60 * 60 * 1000)).toLocaleDateString()}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No modules completed yet</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default UserProfile;
