@@ -230,10 +230,13 @@ interface ExcelVbaAiProps {
   setCompletedLessons: (lessons: Set<string>) => void;
 }
 
+// Key for localStorage
+const STORAGE_KEY = 'excelVbaAiProgress';
+
 const ExcelVbaAi: React.FC<ExcelVbaAiProps> = ({
   selectedTopic: propSelectedTopic,
   onTopicSelect: propOnTopicSelect,
-  completedLessons: propCompletedLessons = new Set(),
+  completedLessons: propCompletedLessons,
   setCompletedLessons: propSetCompletedLessons
 }) => {
   // Use URL parameters for topic and lesson if not provided as props
@@ -249,24 +252,47 @@ const ExcelVbaAi: React.FC<ExcelVbaAiProps> = ({
   
   // Use props if provided, otherwise use URL state
   const selectedTopic = propSelectedTopic || urlTopic || "vba-fundamentals";
-  const completedLessons = propCompletedLessons || new Set();
+  
+  // Initialize completed lessons from localStorage if not provided via props
+  const [localCompletedLessons, setLocalCompletedLessons] = useState<Set<string>>(() => {
+    if (propCompletedLessons) return propCompletedLessons;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? new Set(JSON.parse(saved)) : new Set<string>();
+    } catch (error) {
+      console.error('Failed to load progress from localStorage', error);
+      return new Set<string>();
+    }
+  });
+  
+  // Use prop-based state if provided, otherwise use local state
+  const completedLessons = propCompletedLessons || localCompletedLessons;
   
   // Handle topic selection
-  const onTopicSelect = (topicId: TopicId) => {
+  const onTopicSelect = useCallback((topicId: TopicId) => {
     if (propOnTopicSelect) {
       propOnTopicSelect(topicId);
     } else {
       // If no prop handler, update URL
       navigate(`/excel-vba-ai/${topicId}`);
     }
-  };
+  }, [navigate, propOnTopicSelect]);
   
-  const setCompletedLessons = (lessons: Set<string>) => {
+  // Update completed lessons in both state and localStorage
+  const setCompletedLessons = useCallback((lessons: Set<string>) => {
     if (propSetCompletedLessons) {
       propSetCompletedLessons(lessons);
+    } else {
+      // Update local state
+      setLocalCompletedLessons(lessons);
+      // Persist to localStorage
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(lessons)));
+      } catch (error) {
+        console.error('Failed to save progress to localStorage', error);
+      }
     }
-    // If no prop handler, you might want to handle this case (e.g., local state)
-  };
+  }, [propSetCompletedLessons]);
   
   // Load lesson from URL on component mount or when params change
   useEffect(() => {
@@ -280,6 +306,12 @@ const ExcelVbaAi: React.FC<ExcelVbaAiProps> = ({
           topicId: validId,
           lessonIndex
         });
+        // Mark as viewed but not necessarily completed
+        const lessonId = `${validId}-${lessonIndex}`;
+        if (!completedLessons.has(lessonId)) {
+          // Optional: You might want to mark as viewed but not completed
+          // setCompletedLessons(new Set([...completedLessons, lessonId]));
+        }
         // Scroll to top when loading a lesson
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
@@ -291,7 +323,7 @@ const ExcelVbaAi: React.FC<ExcelVbaAiProps> = ({
       // If only topic is in URL, clear selected lesson
       setSelectedLesson(null);
     }
-  }, [urlTopic, urlLesson, navigate]);
+  }, [urlTopic, urlLesson, navigate, completedLessons]);
   const [showQuiz, setShowQuiz] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<{topicId: string, lessonIndex: number} | null>(null);
 
@@ -368,19 +400,19 @@ const ExcelVbaAi: React.FC<ExcelVbaAiProps> = ({
       
       // Check if there's a next lesson in the current topic
       if (nextLessonIndex < currentTopic.lessons.length) {
-        setSelectedLesson({
-          topicId: selectedLesson.topicId, 
-          lessonIndex: nextLessonIndex
-        });
+        const nextLessonId = `${validId}-${nextLessonIndex}`;
+        // Navigate to next lesson
+        navigate(`/excel-vba-ai/${validId}/lessons/${nextLessonIndex}`, { replace: true });
       } else {
-        // Go back to lesson list if this was the last lesson
-        setSelectedLesson(null);
+        // Go back to topic view if this was the last lesson
+        navigate(`/excel-vba-ai/${validId}`);
       }
     } catch (error) {
       console.error('Error in goToNextLesson:', error);
-      // Optionally show an error message to the user
+      // Show error to user
+      alert('Failed to navigate to next lesson. Please try again.');
     }
-  }, [selectedLesson, completedLessons, setCompletedLessons]);
+  }, [selectedLesson, completedLessons, setCompletedLessons, navigate]);
 
   // Ensure selectedTopic is valid, fallback to first topic if not
   const validTopic = isTopicId(selectedTopic) ? selectedTopic : 'vba-fundamentals';

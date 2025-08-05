@@ -1208,13 +1208,18 @@ df = px.DataFrame(px.get_worksheet_data("PropertyTable"))</pre>
                 </li>
                 <li>
                   <strong>Modify the script</strong> to use the already processed data from your previous script output, replacing the first few lines with:
-                  <pre className="bg-slate-100 p-2 mt-1 rounded text-xs"># Use the already processed dataframe
+                  <div className="bg-slate-100 p-2 mt-1 rounded text-xs overflow-x-auto">
+                    <pre className="whitespace-pre-wrap break-words">
+                      {`# Use the already processed dataframe
 # No need to clean data again as it's already done
 
 # Step 3: Define features and target
-X = df[['Area', 'Property Type', 'Bedrooms', 'Bathrooms', 'Floor Area (m²)', 'Erf Size (m²)', 
-        'Property Age', 'Has Pool', 'Has Garden', 'Has Security', 'Has Garage']]
-y = df['Sale Price (ZAR)']</pre>
+X = df[['Area', 'Property Type', 'Bedrooms', 'Bathrooms', 
+        'Floor Area (m²)', 'Erf Size (m²)', 'Property Age', 
+        'Has Pool', 'Has Garden', 'Has Security', 'Has Garage']]
+y = df['Sale Price (ZAR)']`}
+                    </pre>
+                  </div>
                 </li>
                 <li>
                   <strong>Run the script</strong> to train the machine learning model. You'll see the model evaluation metrics in the output.
