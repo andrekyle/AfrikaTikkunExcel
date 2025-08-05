@@ -198,7 +198,7 @@ ErrorHandler:
     Debug.Print "Error " & Err.Number & ": " & Err.Description
     Debug.Print "Source: " & Err.Source
 End Sub`}
-                  buttonText="Copy Code"
+                  label="Copy Code"
                 />
               </div>
               <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
