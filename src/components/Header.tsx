@@ -40,7 +40,7 @@ const Header = () => {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <a href="/" className="flex items-center">
+            <a href="/" className="flex items-center pt-[5px]">
               <div className="safari-svg-fix" style={{
                 height: '3.5rem',
                 width: 'auto',
