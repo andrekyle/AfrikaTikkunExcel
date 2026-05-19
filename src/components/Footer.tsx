@@ -8,7 +8,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center">
               <img 
-                src="/images/eruditio-logo.svg" 
+                src="/images/logoeru.png" 
                 alt="Eruditio" 
                 className="h-14 w-auto" 
               />

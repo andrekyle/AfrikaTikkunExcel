@@ -48,7 +48,7 @@ const Header = () => {
                 alignItems: 'center'
               }}>
                 <img 
-                  src="/images/eruditio-logo.svg" 
+                  src="/images/logoeru.png" 
                   alt="Eruditio" 
                   className="h-full w-auto" 
                   style={{
