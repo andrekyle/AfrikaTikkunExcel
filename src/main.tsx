@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+﻿import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Auth0Provider } from "@auth0/auth0-react";
 import App from "./App.tsx";
@@ -9,11 +9,11 @@ import "./index.css";
 const PROD_AUTH0_DOMAIN = (window as any).__PRODUCTION_AUTH0_DOMAIN__ || 'dev-t6olnxyxupee6ey5.us.auth0.com';
 const PROD_AUTH0_CLIENT_ID = (window as any).__PRODUCTION_AUTH0_CLIENT_ID__ || 'P4IZsvXtaTcEddvPiAKUpqIYauzyqkE4';
 const PROD_AUTH0_AUDIENCE = (window as any).__PRODUCTION_AUTH0_AUDIENCE__ || 'https://dev-t6olnxyxupee6ey5.us.auth0.com/api/v2/';
-const PROD_AUTH0_CALLBACK_URL = (window as any).__PRODUCTION_AUTH0_CALLBACK_URL__ || 'https://afrikatikkunexcel.vercel.app/callback';
+const PROD_AUTH0_CALLBACK_URL = (window as any).__PRODUCTION_AUTH0_CALLBACK_URL__ || 'https://eruditio-excel.vercel.app/callback';
 
 // Determine if we're in a production environment
 const isProduction = window.location.hostname.includes('vercel.app') || 
-                    window.location.hostname === 'afrikatikkunexcel.vercel.app';
+                    window.location.hostname === 'eruditio-excel.vercel.app';
 
 // Use environment variables if available, production values if in production, or fall back to hardcoded values
 const domain = isProduction ? PROD_AUTH0_DOMAIN : (import.meta.env.VITE_AUTH0_DOMAIN || PROD_AUTH0_DOMAIN);

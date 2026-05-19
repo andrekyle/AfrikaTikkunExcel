@@ -8,12 +8,12 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center">
               <img 
-                src="/images/afrika-tikkun-logo.svg" 
-                alt="Afrika Tikkun Services" 
+                src="/images/eruditio-logo.svg" 
+                alt="Eruditio" 
                 className="h-14 w-auto" 
               />
             </div>
-            <p className="text-sm text-muted-foreground">Empowering Afrika Tikkun Staff <br />with Data Analytics Skills
+            <p className="text-sm text-muted-foreground">Empowering staff <br />with Data Analytics Skills
             </p>
           </div>
 
@@ -60,7 +60,7 @@ const Footer = () => {
 
         <div className="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            © 2025 Afrika Tikkun Services. All rights reserved.
+            © 2025 Eruditio. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm text-muted-foreground mt-4 md:mt-0">
             <a href="#" className="hover:text-excel-green transition-colors">Privacy Policy</a>

@@ -1,17 +1,17 @@
-/**
+﻿/**
  * Production Authentication Test
  * Verifies Auth0 and Firebase integration works correctly on Vercel
  */
 
 const testProductionAuth = () => {
-  console.log('🌐 Testing Production Authentication on Vercel');
+  console.log('ðŸŒ Testing Production Authentication on Vercel');
   console.log('=' .repeat(60));
   
   const productionChecks = [
     {
       name: 'Vercel Deployment Status',
       description: 'Check if latest commit is deployed',
-      url: 'https://afrikatikkunexcel.vercel.app',
+      url: 'https://eruditio-excel.vercel.app',
       expectedCommit: 'a87c5fd',
       status: 'READY'
     },
@@ -21,7 +21,7 @@ const testProductionAuth = () => {
       details: {
         domain: 'dev-t6olnxyxupee6ey5.us.auth0.com',
         clientId: 'P4IZsvXtaTcEddvPiAKUpqIYauzyqkE4',
-        callbackUrl: 'https://afrikatikkunexcel.vercel.app/callback'
+        callbackUrl: 'https://eruditio-excel.vercel.app/callback'
       },
       status: 'CONFIGURED'
     },
@@ -51,9 +51,9 @@ const testProductionAuth = () => {
     }
   ];
   
-  console.log('🔍 Production Readiness Checklist:');
+  console.log('ðŸ” Production Readiness Checklist:');
   productionChecks.forEach((check, index) => {
-    const statusIcon = check.status === 'READY' || check.status === 'CONFIGURED' || check.status === 'APPLIED' ? '✅' : '⚠️';
+    const statusIcon = check.status === 'READY' || check.status === 'CONFIGURED' || check.status === 'APPLIED' ? 'âœ…' : 'âš ï¸';
     console.log(`${index + 1}. ${statusIcon} ${check.name}`);
     console.log(`   ${check.description}`);
     
@@ -73,8 +73,8 @@ const testProductionAuth = () => {
     console.log('');
   });
   
-  console.log('🧪 Manual Testing Steps for Production:');
-  console.log('1. Visit: https://afrikatikkunexcel.vercel.app');
+  console.log('ðŸ§ª Manual Testing Steps for Production:');
+  console.log('1. Visit: https://eruditio-excel.vercel.app');
   console.log('2. Click "Login" button');
   console.log('3. Test with super admin: andresnell29@gmail.com');
   console.log('4. Verify admin dashboard access');
@@ -82,21 +82,21 @@ const testProductionAuth = () => {
   console.log('6. Check user profile creation');
   console.log('7. Verify course access');
   
-  console.log('\n🔧 If Authentication Fails:');
+  console.log('\nðŸ”§ If Authentication Fails:');
   console.log('1. Check browser console for errors');
   console.log('2. Verify Firebase environment variables in Vercel');
   console.log('3. Check Auth0 callback URL configuration');
   console.log('4. Test Firebase connection at /test-firebase route');
   
-  console.log('\n📊 Expected Behavior:');
-  console.log('✅ Super admin gets role: "super_admin"');
-  console.log('✅ Regular users get role: "user"');
-  console.log('✅ New users get status: "pending" (or "active" for super admin)');
-  console.log('✅ User objects properly typed with TypeScript fixes');
-  console.log('✅ No TypeScript compilation errors');
+  console.log('\nðŸ“Š Expected Behavior:');
+  console.log('âœ… Super admin gets role: "super_admin"');
+  console.log('âœ… Regular users get role: "user"');
+  console.log('âœ… New users get status: "pending" (or "active" for super admin)');
+  console.log('âœ… User objects properly typed with TypeScript fixes');
+  console.log('âœ… No TypeScript compilation errors');
   
-  console.log('\n🚀 Production URL: https://afrikatikkunexcel.vercel.app');
-  console.log('📦 Latest commit with fixes: a87c5fd');
+  console.log('\nðŸš€ Production URL: https://eruditio-excel.vercel.app');
+  console.log('ðŸ“¦ Latest commit with fixes: a87c5fd');
 };
 
 // Run the test

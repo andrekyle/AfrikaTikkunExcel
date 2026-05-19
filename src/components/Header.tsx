@@ -48,8 +48,8 @@ const Header = () => {
                 alignItems: 'center'
               }}>
                 <img 
-                  src="/images/afrika-tikkun-logo.svg" 
-                  alt="Afrika Tikkun Services" 
+                  src="/images/eruditio-logo.svg" 
+                  alt="Eruditio" 
                   className="h-full w-auto" 
                   style={{
                     maxHeight: '100%',

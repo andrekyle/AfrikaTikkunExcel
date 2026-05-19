@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+﻿import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => ({
   define: {
     '__PRODUCTION_AUTH0_DOMAIN__': JSON.stringify('dev-t6olnxyxupee6ey5.us.auth0.com'),
     '__PRODUCTION_AUTH0_CLIENT_ID__': JSON.stringify('P4IZsvXtaTcEddvPiAKUpqIYauzyqkE4'),
-    '__PRODUCTION_AUTH0_CALLBACK_URL__': JSON.stringify('https://afrikatikkunexcel.vercel.app/callback'),
+    '__PRODUCTION_AUTH0_CALLBACK_URL__': JSON.stringify('https://eruditio-excel.vercel.app/callback'),
     '__PRODUCTION_AUTH0_AUDIENCE__': JSON.stringify('https://dev-t6olnxyxupee6ey5.us.auth0.com/api/v2/'),
   },
 }));

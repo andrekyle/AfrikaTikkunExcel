@@ -1,4 +1,4 @@
-# AfrikaTikkun Excel Training Platform
+# Eruditio Excel Training Platform
 
 A comprehensive Excel training platform built with React, TypeScript, and Vite. This application provides interactive Excel training materials, VBA lessons, and practical exercises.
 
@@ -53,6 +53,3 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
-=======
-# AfrikaTikkunExcel
->>>>>>> 0865f5ee676cefb94cb4408bd16f73562aeaabfc
