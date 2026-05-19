@@ -36,7 +36,7 @@ const Header = () => {
   }, [user]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
@@ -69,22 +69,15 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              <div className="hidden md:flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-green-500">
+              <div className="hidden md:flex items-center space-x-3">
+                <div className="h-8 w-8 rounded-full overflow-hidden ring-1 ring-border bg-muted">
                   {user?.picture ? (
                     <img src={user.picture} alt={user.name || 'User'} className="h-full w-full object-cover" />
                   ) : (
-                    <User className="h-full w-full p-1" />
+                    <User className="h-full w-full p-1 text-muted-foreground" />
                   )}
                 </div>
-                <span className="text-sm font-medium">{user?.name || user?.email}</span>
-                {isSuperAdmin && (
-                  <div className="ml-1">
-                    <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
-                      <ShieldAlert className="mr-1 h-3 w-3" /> Admin
-                    </span>
-                  </div>
-                )}
+                <span className="text-sm font-medium text-foreground">{user?.name || user?.email}</span>
               </div>
               <Button 
                 variant="ghost" 
