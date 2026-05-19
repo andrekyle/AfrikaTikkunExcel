@@ -121,7 +121,7 @@ const Header = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="hidden md:flex items-center px-4 py-2 bg-white text-slate-800 hover:bg-slate-100 border border-slate-300 shadow-sm" 
+              className="hidden md:flex items-center px-4 py-2 bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900 border border-slate-300 shadow-sm" 
               onClick={() => loginWithRedirect({ 
                 authorizationParams: {
                   connection: "google-oauth2"
