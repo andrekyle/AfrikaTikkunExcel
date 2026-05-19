@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import CourseResourcesPanel from "@/components/CourseResourcesPanel";
 import { 
   CheckCircle, 
   Clock, 
@@ -407,6 +408,10 @@ const AdvancedExcel = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="container pt-6">
+        <CourseResourcesPanel courseId="advanced-excel" />
       </div>
 
       <div className="container py-8">

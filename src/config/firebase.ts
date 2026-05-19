@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getStorage, connectStorageEmulator, FirebaseStorage } from "firebase/storage";
 
 // Check for environment variables and provide better debug info
 if (!import.meta.env.VITE_FIREBASE_PROJECT_ID || 
@@ -30,6 +31,7 @@ const isDevelopment = import.meta.env.DEV ||
 
 // Initialize Firebase with better error handling
 let app, db, auth;
+let storage: FirebaseStorage;
 
 try {
   // Log attempt to initialize Firebase
@@ -39,11 +41,13 @@ try {
   app = initializeApp(firebaseConfig);
   db = getFirestore(app);
   auth = getAuth(app);
+  storage = getStorage(app);
   
   // Use emulator in development if needed
   if (isDevelopment && import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
     connectFirestoreEmulator(db, 'localhost', 8080);
     connectAuthEmulator(auth, 'http://localhost:9099');
+    connectStorageEmulator(storage, 'localhost', 9199);
     console.log('Connected to Firebase emulators');
   }
   
@@ -64,10 +68,11 @@ try {
   
   if (!db) db = getFirestore(app);
   if (!auth) auth = getAuth(app);
+  if (!storage) storage = getStorage(app);
 }
 
 // Export Firebase instances
-export { app, db, auth };
+export { app, db, auth, storage };
 
 // Export a utility to check if Firebase is properly configured
 export const isFirebaseConfigured = () => {

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import ConditionalFormattingExercise from "@/components/ConditionalFormattingExercise";
 import PerformanceScorecardExercise from "@/components/PerformanceScorecardExercise";
+import CourseResourcesPanel from "@/components/CourseResourcesPanel";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -224,6 +225,10 @@ const ExcelFundamentals = () => {
           </div>
         </div>
       </header>
+
+      <div className="container pt-6">
+        <CourseResourcesPanel courseId="excel-fundamentals" />
+      </div>
 
       <div className="container py-8">
         <div className="grid lg:grid-cols-4 gap-8">

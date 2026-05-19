@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { User, UserStatus } from '@/types/user';
 import * as userService from '@/services/firebaseUserService';
 import UserManagementTable from '@/components/UserManagementTable';
+import CourseResourceManager from '@/components/admin/CourseResourceManager';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
@@ -308,6 +309,7 @@ const AdminDashboard = () => {
           <TabsList className="mb-4">
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="progress">Progress Tracking</TabsTrigger>
+            <TabsTrigger value="files">Course Files</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           
@@ -417,6 +419,10 @@ const AdminDashboard = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+          
+          <TabsContent value="files">
+            <CourseResourceManager />
           </TabsContent>
           
           <TabsContent value="settings">

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
 import { Progress } from '@/components/ui/progress';
+import CourseResourcesPanel from '@/components/CourseResourcesPanel';
 
 // Define valid topic IDs as a union type
 type TopicId = 'vba-fundamentals' | 'ai-excel-integration' | 'vba-ai-automation' | 'intelligent-dashboards' | 'advanced-projects' | 'process-optimization';
@@ -467,6 +468,10 @@ const ExcelVbaAi: React.FC<ExcelVbaAiProps> = ({
           </div>
         </div>
       </header>
+
+      <div className="container pt-6">
+        <CourseResourcesPanel courseId="excel-vba-ai" />
+      </div>
 
       {/* Hero Section */}
       <div className="text-center space-y-6 py-12 bg-gradient-to-b from-background to-muted/30">
